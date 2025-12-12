@@ -1,0 +1,60 @@
+name: brcfdna-nf
+channels: 
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Core pipeline tools
+  - python=3.11
+  - openjdk=17
+  - pip
+  
+  # Read processing & alignment
+  - bbmap
+  - fastp
+  - bwa
+  - bowtie2
+  - samtools>=1.17
+  - bedtools>=2.30
+  - picard
+  - umi_tools
+  
+  # QC tools
+  - qualimap
+  - multiqc
+  
+  # Coverage & fragmentomics analysis
+  - deeptools>=3.5
+  - pysam>=0.21
+  
+  # Microbiome profiling
+  - metaphlan>=4.0
+  
+  # Gene enrichment analysis
+  - homer
+  - macs2
+  
+  # Data processing
+  - pandas>=2.0
+  - numpy>=1.24
+  - scipy>=1.10
+  - scikit-learn>=1.2
+  
+  # Visualization
+  - matplotlib>=3.7
+  - seaborn
+  - tqdm
+  
+  # Utilities
+  - coreutils
+  - pigz
+  - grep
+  - sed
+  - gawk
+  - nextflow>=23.0
+  
+  # Pip packages
+  - pip:
+      - srslyumi>=0.2.0
+      - biopython>=1.81
