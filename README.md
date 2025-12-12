@@ -14,7 +14,7 @@ Originally developed by Irene Choi, Neeti Swarup, and Jordan Cheng at [W Lab, UC
 ## 📋 Table of Contents
 
 - [Introduction](#-introduction)
-- [Computational Requirements](#-requirements)
+- [Computational Requirements](#-computational-requirements)
 - [Installation](#-installation)
 - [Reference File Setup](#-reference-file-setup)
 - [Running the Pipeline](#-running-the-pipeline)
