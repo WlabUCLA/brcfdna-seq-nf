@@ -160,7 +160,7 @@ include { AGGREGATE_HOMER_HISTSTATS } from './modules/downstream_saliva/aggregat
 
 def deriveSampleIdFromFastq = { p ->
     new File(p.toString()).getName()
-        .replaceFirst(/(?:[._-](?:R?1|1)(?:_\d{3})?)\.(?:f(?:ast)?q)\.gz$/, '')
+        .replaceFirst(/(?:[._-](?:R?[123]|[123])(?:_\d{3})?)\.(?:f(?:ast)?q)\.gz$/, '')
 }
 
 def deriveSampleIdFromBam = { bam_path ->
