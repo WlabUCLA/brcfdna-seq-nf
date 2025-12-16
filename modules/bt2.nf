@@ -30,11 +30,11 @@ process ALIGN_BT2 {
     }
     """
     # Align with bowtie2
-    bowtie2 \
-        -x ${bt2_index} \
-        -U ${trimmed_fastq} \
-        -p ${task.cpus} \
-        --very-sensitive \
+    bowtie2 \\
+        -x ${bt2_index} \\
+        -U ${trimmed_fastq} \\
+        -p ${task.cpus} \\
+        --very-sensitive \\
         -S ${meta.sample_id}_all.sam
     
     # Extract unmapped reads (flag 4) and save as BAM for MetaPhlAn
@@ -48,9 +48,9 @@ process ALIGN_BT2 {
     rm -f ${meta.sample_id}_all.sam
     
     # Report stats
-    TOTAL=$(samtools view -c ${meta.sample_id}.bowtie2.sam || echo "0")
-    UNMAPPED=$(samtools view -c ${meta.sample_id}_unmapped.bam || echo "0")
-    echo "Mapped reads: ${TOTAL}"
-    echo "Unmapped reads: ${UNMAPPED}"
+    TOTAL=\$(samtools view -c ${meta.sample_id}.bowtie2.sam || echo "0")
+    UNMAPPED=\$(samtools view -c ${meta.sample_id}_unmapped.bam || echo "0")
+    echo "Mapped reads: \${TOTAL}"
+    echo "Unmapped reads: \${UNMAPPED}"
     """
 }
