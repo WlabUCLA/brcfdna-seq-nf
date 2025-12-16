@@ -1,8 +1,5 @@
 /*
-================================================================================
- * ALIGN_BWA
-================================================================================
-BWA-MEM alignment for plasma cfDNA
+ * ALIGN_BWA - BWA-MEM alignment for plasma cfDNA
  */
 
 process ALIGN_BWA {

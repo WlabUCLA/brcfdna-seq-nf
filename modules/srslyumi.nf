@@ -1,8 +1,13 @@
 /*
 ================================================================================
- * SRSLYUMI
+    SRSLYUMI - Tag reads with UMI (RX tag)
 ================================================================================
     Uses srslyumi-bamtag to extract UMI from read names and add RX tag.
+    
+    Command: srslyumi-bamtag --binary -o OUTPUT.bam --take-fragment 0 INPUT.bam
+    
+    INPUT:  tuple(meta, bam, bai)
+    OUTPUT: tuple(meta, bam_with_rx)
 */
 
 process SRSLYUMI {

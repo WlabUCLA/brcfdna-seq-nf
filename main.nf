@@ -324,8 +324,9 @@ workflow {
                 }
         }
         
-        // Run downstream analyses
-        RUN_DOWNSTREAM(ch_bam_for_downstream, ch_reference)
+        // Run downstream analyses (no unmapped reads in BAM mode)
+        ch_unmapped_empty = Channel.empty()
+        RUN_DOWNSTREAM(ch_bam_for_downstream, ch_reference, ch_unmapped_empty)
     }
     
     // ========================================================================
@@ -364,11 +365,13 @@ workflow {
         }
         
         // Run preprocessing
-        ch_preprocessed = RUN_PREPROCESSING(ch_reads)
+        preprocessing_result = RUN_PREPROCESSING(ch_reads)
+        ch_preprocessed = preprocessing_result.ch_final_bam
+        ch_unmapped = preprocessing_result.ch_unmapped
         
         // Run downstream if requested
         if (downstreamRequested || params.run_downstream) {
-            RUN_DOWNSTREAM(ch_preprocessed, ch_reference)
+            RUN_DOWNSTREAM(ch_preprocessed, ch_reference, ch_unmapped)
         }
     }
 }
@@ -400,6 +403,9 @@ workflow RUN_PREPROCESSING {
         c1 = ALIGN_BWA(ch_trimmed)
         c1_bam = c1.bam
         
+        // No unmapped reads extraction for plasma (microbiome not applicable)
+        ch_unmapped = Channel.empty()
+        
         QC_INT(c1_bam)
         
         c3 = SRSLYUMI(c1_bam)
@@ -426,6 +432,9 @@ workflow RUN_PREPROCESSING {
         s2 = SAM2BAM(s1.sam)
         s2_bam = s2.bam
         
+        // Capture unmapped reads for microbiome analysis
+        ch_unmapped = s1.unmapped
+        
         QC_INT(s2_bam)
         
         s4 = SRSLYUMI(s2_bam)
@@ -448,6 +457,7 @@ workflow RUN_PREPROCESSING {
     
     emit:
     ch_final_bam
+    ch_unmapped
 }
 
 // ============================================================================
@@ -460,6 +470,7 @@ workflow RUN_DOWNSTREAM {
     take:
     ch_bam        // tuple(meta, bam)
     ch_reference  // reference fasta (can be empty)
+    ch_unmapped   // tuple(meta, unmapped_bam, bai) - for microbiome analysis
     
     main:
     
@@ -563,9 +574,9 @@ workflow RUN_DOWNSTREAM {
         }
     }
     
-    // Microbiome Profiling
+    // Microbiome Profiling (uses unmapped reads from alignment step)
     if (params.run_all || params.run_microbiome) {
-        MICROBIOME_ANALYSIS(ch_bam)
+        MICROBIOME_ANALYSIS(ch_unmapped)
     }
 }
 

@@ -5,6 +5,8 @@
     Performs microbiome profiling on unmapped reads using MetaPhlAn 4.
     Identifies bacterial, archaeal, viral, and eukaryotic species in saliva samples.
     
+    INPUT: Unmapped BAM from alignment step (not the final processed BAM)
+    
     IMPORTANT: MetaPhlAn requires a pre-installed database.
     
     Database Setup (run once before using this module):
@@ -21,7 +23,7 @@ process MICROBIOME_ANALYSIS {
     publishDir "${params.outdir}/downstream/microbiome/${meta.sample_id}", mode: 'copy'
     
     input:
-    tuple val(meta), path(bam)
+    tuple val(meta), path(unmapped_bam), path(unmapped_bai)
     
     output:
     tuple val(meta), path("${meta.sample_id}_mpa.csv"), emit: mpa_profile
@@ -37,18 +39,17 @@ process MICROBIOME_ANALYSIS {
     
     echo "=== MetaPhlAn Microbiome Analysis ==="
     echo "Sample: ${meta.sample_id}"
+    echo "Input: ${unmapped_bam}"
     echo "Database: ${params.metaphlan_db ?: 'default (auto-detect)'}"
     
-    # Extract unmapped reads from BAM (flag 4 = unmapped)
-    echo "Extracting unmapped reads..."
-    samtools view -f 4 -b ${bam} | \\
-        samtools fastq -@ ${task.cpus} - | \\
-        gzip > ${meta.sample_id}_unmapped.fastq.gz
+    # Convert unmapped BAM to FASTQ
+    echo "Converting unmapped BAM to FASTQ..."
+    samtools fastq -@ ${task.cpus} ${unmapped_bam} | gzip > ${meta.sample_id}_unmapped.fastq.gz
     
     # Count unmapped reads
     UNMAPPED_COUNT=\$(zcat ${meta.sample_id}_unmapped.fastq.gz | wc -l)
     UNMAPPED_COUNT=\$((UNMAPPED_COUNT / 4))
-    echo "Unmapped reads extracted: \${UNMAPPED_COUNT}"
+    echo "Unmapped reads: \${UNMAPPED_COUNT}"
     
     # Check if we have unmapped reads to process
     if [[ \${UNMAPPED_COUNT} -gt 0 ]]; then
@@ -74,43 +75,15 @@ process MICROBIOME_ANALYSIS {
         
         # Add summary stats
         echo ""
-        echo "=== Summary ==="
+        echo "=== Top Taxa ==="
         head -20 ${meta.sample_id}_mpa.csv
         
     else
-        echo "WARNING: No unmapped reads found in ${bam}"
+        echo "WARNING: No unmapped reads found in ${unmapped_bam}"
         echo "clade_name,relative_abundance" > ${meta.sample_id}_mpa.csv
         echo "UNKNOWN,100.0" >> ${meta.sample_id}_mpa.csv
     fi
     
     echo "Microbiome analysis complete for ${meta.sample_id}"
-    """
-}
-
-/*
- * Optional: Database installation process
- * Run this once to set up the MetaPhlAn database
- */
-process METAPHLAN_INSTALL_DB {
-    label 'process_high'
-    storeDir "${params.metaphlan_db ?: 'metaphlan_db'}"
-    
-    output:
-    path "mpa_vJan21_CHOCOPhlAnSGB_202103/*", emit: db_files
-    
-    script:
-    def db_path = params.metaphlan_db ?: 'metaphlan_db'
-    """
-    #!/usr/bin/env bash
-    set -euo pipefail
-    
-    echo "Installing MetaPhlAn database to ${db_path}..."
-    echo "This may take 10-30 minutes depending on network speed."
-    
-    metaphlan --install --bowtie2db ${db_path}
-    
-    echo "Database installation complete."
-    echo "Files installed:"
-    ls -lh ${db_path}/
     """
 }

@@ -1,8 +1,5 @@
 /*
-================================================================================
- * BLACKLIST
-================================================================================
-Remove reads overlapping blacklist regions
+ * BLACKLIST - Remove reads overlapping blacklist regions
  */
 
 process BLACKLIST {

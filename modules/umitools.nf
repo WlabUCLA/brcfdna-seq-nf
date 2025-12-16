@@ -1,8 +1,12 @@
 /*
 ================================================================================
- * UMITOOLS
+    UMITOOLS - UMI-based deduplication grouping
 ================================================================================
     Groups reads by UMI to identify PCR duplicates.
+    Uses directional method for UMI network clustering.
+    
+    INPUT:  tuple(meta, rx_bam) - BAM with RX tags
+    OUTPUT: tuple(meta, bx_bam, tsv) - BAM with BX tags + correction table
 */
 
 process UMITOOLS {

@@ -1,8 +1,5 @@
 /*
-================================================================================
- * CLIPPING
-================================================================================
-Remove soft/hard clipped reads (plasma mode only)
+ * CLIPPING - Remove soft/hard clipped reads (plasma mode only)
  */
 
 process CLIPPING {

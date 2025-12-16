@@ -1,8 +1,16 @@
 /*
 ================================================================================
- * PICARD - Mark and remove duplicates (UMI-aware)
+    PICARD - Mark and remove duplicates (UMI-aware)
 ================================================================================
-Uses Picard MarkDuplicates with BX barcode tag for UMI-aware deduplication.
+    Uses Picard MarkDuplicates with BX barcode tag for UMI-aware deduplication.
+    
+    Key parameters from Hoffman script:
+    - BARCODE_TAG=BX: Uses UMI (BX tag from umi_tools) for duplicate detection
+    - VALIDATION_STRINGENCY=LENIENT: Tolerates minor BAM issues
+    - REMOVE_DUPLICATES=TRUE: Actually removes duplicates (not just marks)
+    
+    INPUT:  tuple(meta, bx_bam, umi_tsv)
+    OUTPUT: tuple(meta, sorted_bam, bai, metrics)
 */
 
 process PICARD {
