@@ -1,6 +1,9 @@
 /*
+================================================================================
  * AUTOSOMAL_MITO - Split BAM into nuclear and mitochondrial fractions
- * Accepts input from either CLIPPING (plasma) or PICARD (saliva)
+================================================================================
+Accepts input from either CLIPPING (plasma) or PICARD (saliva)
+Split BAM into nuclear and mitochondrial fractions
  */
 
 process AUTOSOMAL_MITO {

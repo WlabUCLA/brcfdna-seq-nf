@@ -1,6 +1,9 @@
 /*
- * PICARD - Mark and remove duplicates
- */
+================================================================================
+ * PICARD - Mark and remove duplicates (UMI-aware)
+================================================================================
+Uses Picard MarkDuplicates with BX barcode tag for UMI-aware deduplication.
+*/
 
 process PICARD {
     tag "${meta.sample_id}"
@@ -17,16 +20,23 @@ process PICARD {
     script:
     """
     # Sort by coordinate before deduplication (required for MarkDuplicates)
-    samtools sort -@ ${task.cpus} -o ${meta.sample_id}_presort.bam ${bx_bam}
+    samtools sort -@ ${task.cpus} -o ${meta.sample_id}_sorted_BX.bam ${bx_bam}
+    samtools index ${meta.sample_id}_sorted_BX.bam
     
-    picard MarkDuplicates \\
-        I=${meta.sample_id}_presort.bam \\
-        O=${meta.sample_id}_deduped.bam \\
-        M=${meta.sample_id}_deduped.metrics.txt \\
-        REMOVE_DUPLICATES=true \\
-        ASSUME_SORTED=true
+    # UMI-aware duplicate removal using BX tag
+    picard MarkDuplicates \
+        BARCODE_TAG=BX \
+        VALIDATION_STRINGENCY=LENIENT \
+        I=${meta.sample_id}_sorted_BX.bam \
+        O=${meta.sample_id}_deduped.bam \
+        M=${meta.sample_id}_deduped.metrics.txt \
+        REMOVE_DUPLICATES=TRUE
     
+    # Final sort and index
     samtools sort -@ ${task.cpus} -o ${meta.sample_id}_sorted_2.bam ${meta.sample_id}_deduped.bam
     samtools index ${meta.sample_id}_sorted_2.bam
+    
+    # Clean up intermediate files
+    rm -f ${meta.sample_id}_sorted_BX.bam ${meta.sample_id}_sorted_BX.bam.bai ${meta.sample_id}_deduped.bam
     """
 }

@@ -1,5 +1,8 @@
 /*
- * ALIGN_BT2 - Bowtie2 alignment for saliva cfDNA
+================================================================================
+ * ALIGN_BT2
+================================================================================
+Bowtie2 alignment for saliva cfDNA
  */
 
 process ALIGN_BT2 {

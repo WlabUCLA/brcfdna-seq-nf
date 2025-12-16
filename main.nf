@@ -58,6 +58,7 @@ params.bam            = null                    // Single BAM file
 params.sample_id      = null                    // Sample ID (auto-derived if not set)
 params.mode           = 'saliva'                // 'plasma' or 'saliva' (preprocessing mode)
 params.outdir         = 'results'               // Output directory
+params.save_intermediates = false               // Save intermediate files (e.g., UMI-tagged BAMs)
 params.reference      = null                    // Reference genome FASTA
 
 // ----- Reference/Index Parameters -----

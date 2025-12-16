@@ -1,5 +1,8 @@
 /*
- * BBMERGE - Merge paired-end reads into single cfDNA fragments
+================================================================================
+ * BBMERGE
+================================================================================
+Merge paired-end reads into single cfDNA fragments
  */
 
 process BBMERGE {

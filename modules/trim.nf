@@ -1,5 +1,8 @@
 /*
- * FASTP_TRIM - Adapter trimming and quality filtering
+================================================================================
+ * FASTP_TRIM
+================================================================================
+Adapter trimming and quality filtering
  */
 
 process FASTP_TRIM {
